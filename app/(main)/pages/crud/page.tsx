@@ -9,7 +9,7 @@ import { FileUpload } from 'primereact/fileupload';
 import { InputText } from 'primereact/inputtext';
 //import { InputTextarea } from 'primereact/inputtextarea';
 //import { RadioButton, RadioButtonChangeEvent } from 'primereact/radiobutton';
-//import { Rating } from 'primereact/rating';
+import { Rating } from 'primereact/rating';
 import { Toast } from 'primereact/toast';
 import { Toolbar } from 'primereact/toolbar';
 import { classNames } from 'primereact/utils';
@@ -17,7 +17,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 //import { ProductService } from '../../../../demo/service/ProductService';
 import { Projeto } from '@/types';
 import { UsuarioService } from '@/service/UsuarioService';
-//import { error } from 'console';
+import { error } from 'console';
 
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
 const Usuario = () => {
@@ -223,12 +223,9 @@ const Usuario = () => {
     };
 
     const deleteSelectedUsuarios = () => {
-        Promise.all(selectedUsuarios.map((_usuario) => {
+        Promise.all(selectedUsuarios.map( async (_usuario) => {
             if (_usuario.id) {
-                usuarioService.excluir(_usuario.id)
-                    .then((response) => { })
-
-                    .catch((error) => { })
+               await usuarioService.excluir(_usuario.id)
             }
         })).then((response) => {
             setUsuarios([]);
@@ -240,6 +237,12 @@ const Usuario = () => {
                 detail: 'Usuários deletado com sucesso',
                 life: 3000
             });
+        }).catch((error) => {
+            toast.current?.show({
+                severity: 'error',
+                summary: 'Erro!',
+                detail: 'Erro ao deletar usuários',
+                life: 3000})
         })
     };
 
